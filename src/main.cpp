@@ -1,10 +1,10 @@
 #include "algo.h"
 
-int main_test()
+int main()
 {
     gridParams.m = 0.6;
     gridParams.dt = 0.4 * gridParams.m * gridParams.dx * gridParams.dx;
-    gridParams.dt = 0.001;
+    gridParams.dt = 0.01;
     gridParams.N_steps = int(gridParams.T / gridParams.dt);
     potentialParams.type = PotentialType::Barrier;
     potentialParams.barrier_V0 = 30.0;
@@ -14,11 +14,11 @@ int main_test()
     std::cout << "dt: " << gridParams.dt << ", N_steps: " << gridParams.N_steps << std::endl;
     std::cout << "T real: " << gridParams.N_steps * gridParams.dt << std::endl;
     cranck_nickolson_solver();
-    leapfrog_solver();
+    //leapfrog_solver();
     return 0;
 }
 
-int main() {
+int main2() {
     gridParams.m = 0.6;
     gridParams.dt = 0.4 * gridParams.m * gridParams.dx * gridParams.dx;
     gridParams.N_steps = int(gridParams.T / gridParams.dt / 100);

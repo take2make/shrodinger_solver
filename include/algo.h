@@ -49,6 +49,7 @@ inline PotentialParams potentialParams;
 void        write_data_psi(const std::vector<double>& rho, const std::vector<double>& ci_half);
 void        ecrit_new(std::string filename, Eigen::VectorXcd u);
 void        ecrit(std::string filename, Eigen::VectorXcd u);
+void        ecrit_energy(std::string filename, const Eigen::MatrixXcd& H, const Eigen::VectorXcd& u, bool nouveau);
 
 // Initial conditions:
 double      gauss(double x, double m, double s);
