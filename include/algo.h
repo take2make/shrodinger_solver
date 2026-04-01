@@ -20,7 +20,19 @@ struct GridParams {
     double dt = 0.001;
     double m = 10.0;
 };
+
 inline GridParams gridParams;
+
+struct GridParams2d {
+    int N = 40; // nombre de divisions
+    double tf = 20; // duree de la simulation (s)
+    double L = 10; // taille de la boite
+    double dx = L/N; // separation entre les points du reseau
+    double dt = 0.05; // discretization du temps
+    double m = 1; // masse de la particule
+    double h_bar = 1; // constante de Planck reduite
+};
+inline GridParams2d gridParams2d;
 
 struct GaussParams {
     double A = 1.0;
@@ -49,7 +61,7 @@ inline PotentialParams potentialParams;
 void        write_data_psi(const std::vector<double>& rho, const std::vector<double>& ci_half);
 void        ecrit_new(std::string filename, Eigen::VectorXcd u);
 void        ecrit(std::string filename, Eigen::VectorXcd u);
-void        ecrit_energy(std::string filename, const Eigen::MatrixXcd& H, const Eigen::VectorXcd& u, bool nouveau);
+void        ecrit_energy(std::string filename, std::complex<double> a, bool nouveau);
 
 // Initial conditions:
 double      gauss(double x, double m, double s);
@@ -61,6 +73,7 @@ double      potential(double x);
 
 // Shrodinger solvers:
 void        cranck_nickolson_solver();
+void        cranck_nickolson_solver_2d();
 void        leapfrog_solver();
 void        leapfrog_solver2();
 

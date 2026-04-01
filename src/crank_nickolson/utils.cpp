@@ -31,7 +31,7 @@ void ecrit(std::string filename, Eigen::VectorXcd u){
     file.close();
 }
 
-void ecrit_energy(std::string filename, const Eigen::MatrixXcd& H, const Eigen::VectorXcd& u, bool nouveau)
+void ecrit_energy(std::string filename, std::complex<double> a, bool nouveau)
 {   
     std::ofstream file(filename, nouveau ?std::ios_base::out: std::ios_base::app);
     if (! file){
@@ -40,8 +40,7 @@ void ecrit_energy(std::string filename, const Eigen::MatrixXcd& H, const Eigen::
     }
 
     file << std::setiosflags(std::ios::scientific) << std::setprecision(7);
-    (void)H; (void)u;
-    file << u.transpose()*H*u << std::endl; 
+    file << a << std::endl; 
     file << std::endl;
     file.close();
 }

@@ -14,14 +14,11 @@ void time_step_solution(VectorXcd& u, const MatrixXcd& M, bool withWrite)
 void solver(VectorXcd& u, const MatrixXcd& H_m, const MatrixXcd& H_p, const MatrixXcd& H, int N_steps)
 {
     ecrit_new("dat/solution_temporelle_shrodinger.dat", u);
-    //ecrit_energy("dat/shrodinger_energy.dat", u, H, true);
+    ecrit_energy("dat/shrodinger_energy.dat", u.adjoint()*H*u, true);
     MatrixXcd M = H_p.inverse() * H_m;
-    (void)H; (void)u;
-    cout << u.transpose()*H*u << endl;
     for (int n = 0; n < N_steps; n++) {
         time_step_solution(u, M, true);
-        //ecrit_energy("dat/shrodinger_energy.dat", u, H,false);
-        cout << u.adjoint()*H*u << endl;
+        ecrit_energy("dat/shrodinger_energy.dat", u.adjoint()*H*u, false);
     }
 }
 

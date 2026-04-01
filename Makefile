@@ -33,6 +33,9 @@ plot:
 heatmap:
 	python3.11 scripts/heatmap_proba.py
 
+cn_2d:
+	python3.11 scripts/cranck_nickolson_plot_2d.py
+
 proba:
 	python3.11 scripts/check_proba.py
 
