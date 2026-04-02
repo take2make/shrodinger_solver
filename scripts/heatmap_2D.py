@@ -74,7 +74,6 @@ def main() -> None:
         return (im,)
 
     interval_ms = int(1000 / FPS)
-    # Keep a global reference so the animation is not garbage-collected.
     global anim
     anim = FuncAnimation(fig, update, frames=data.shape[0], interval=interval_ms, blit=False)
     plt.show()

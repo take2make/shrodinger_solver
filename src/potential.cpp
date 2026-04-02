@@ -12,18 +12,21 @@ double barrier_potential(double x, double V0, double a, double b)
     return (x > a && x < b) ? V0 : 0.0;
 }
 
+double barrier_potential_step(double x, double V0, double a)
+{
+    // barrier: return (x > a && x < b) ? V0 : 0.0;
+    return (x <= a) ? V0 : 0.0;
+}
+
 double potential(double x)
 {
     switch (potentialParams.type) {
         case PotentialType::None:
             return 0.0;
         case PotentialType::Barrier:
-            return barrier_potential(
-                x,
-                potentialParams.barrier_V0,
-                potentialParams.barrier_a,
-                potentialParams.barrier_b
-            );
+            return barrier_potential(x, potentialParams.barrier_V0, potentialParams.barrier_a, potentialParams.barrier_b);
+        case PotentialType::BarrierStep:
+            return barrier_potential_step(x, potentialParams.barrier_V0, potentialParams.barrier_a);
         case PotentialType::Harmonic:
             return harmonic_oscillator(x, potentialParams.harmonic_k);
         default:

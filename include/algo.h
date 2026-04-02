@@ -12,12 +12,13 @@
 #include <math.h>
 
 struct GridParams {
-    int N_x = 200;
-    int N_steps = 800;
+    int N = 200;
+    int Nt = 800;
     double L = 10.0;
     double T = 10.0;
-    double dx = L / N_x;
+    double dx = L / N;
     double dt = 0.001;
+    int save_step = 10;
     double m = 10.0;
 };
 inline GridParams gridParams;
@@ -25,7 +26,7 @@ inline GridParams gridParams;
 struct GaussParams {
     double A = 1.0;
     double x0 = 5.0;
-    double sigma = 0.5;
+    double sigma = 0.1;
     double k = 0.5;
 };
 inline GaussParams gaussParams;
@@ -33,6 +34,7 @@ inline GaussParams gaussParams;
 enum class PotentialType {
     None,
     Barrier,
+    BarrierStep,
     Harmonic,
 };
 
@@ -52,6 +54,8 @@ void        ecrit(std::string filename, Eigen::VectorXcd u);
 
 // Initial conditions:
 double      gauss(double x, double m, double s);
+double      gauss_with_velocity_real(double x, double m, double s, double k);
+double      gauss_with_velocity_imag(double x, double m, double s, double k);
 
 // Type of potentials:
 double      barrier_potential(double x, double V0, double a, double b);
@@ -61,6 +65,6 @@ double      potential(double x);
 // Shrodinger solvers:
 void        cranck_nickolson_solver();
 void        leapfrog_solver();
-void        leapfrog_solver2();
+void        leapfrog_solver_2D();
 
 #endif

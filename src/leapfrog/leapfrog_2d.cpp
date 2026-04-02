@@ -3,18 +3,17 @@
 
 using namespace std;
 
-static inline int idx_2d(int i, int j, int N) {return i * N + j; }
+int idx_2D(int i, int j, int N) { return i * N + j; }
 
 void set_gauss_conditions_2D(vector<double>& u0, int N)
 {
     vector<double> gx(N, 0.0);
     for (int i = 0; i < N; i++) gx[i] = gauss(i * gridParams.dx, gaussParams.x0, gaussParams.sigma);
-
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             bool is_boundary = (i == 0 || j == 0 || i == N - 1 || j == N - 1);
-            if (is_boundary) u0[idx_2d(i, j, N)] = 0.0;
-            else u0[idx_2d(i, j, N)] = gx[i] * gx[j];
+            if (is_boundary) u0[idx_2D(i, j, N)] = 0.0;
+            else u0[idx_2D(i, j, N)] = gx[i] * gx[j];
         }
     }
 }
@@ -55,9 +54,9 @@ void write_data_step(const vector<double>& rho, const vector<double>& ci_half, o
 {
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            const int k = idx_2d(i, j, N);
+            const int k = idx_2D(i, j, N);
             const double rho_n = rho[k];
-            const double ci_n  = ci_half[k]; // TODO: adjust for time step
+            const double ci_n  = ci_half[k];
             const double psi2  = rho_n * rho_n + ci_n * ci_n;
             file << i * gridParams.dx << " " << j * gridParams.dx << " " << psi2 << "\n";
         }
@@ -65,21 +64,24 @@ void write_data_step(const vector<double>& rho, const vector<double>& ci_half, o
     file << "\n";
 }
 
-void leapfrog_solver2()
-{
-    const int nt = gridParams.N_steps, N = gridParams.N_x + 1, size = N * N;
-    vector<double> rhoMat(size, 0.0), ciHalfMat(size, 0.0), ci0Mat(size, 0.0), lapMat(size, 0.0);
-
-    set_gauss_conditions_2D(rhoMat, N);
-    init_ci_half(ciHalfMat, ci0Mat, rhoMat, lapMat, N);
-
+void solver(vector<double>& rhoMat, vector<double>& ciHalfMat, vector<double>& lapMat, int N, int nt) {
     ofstream file("dat/solution_shrodinger_leapfrog_2D.dat");
     write_data_step(rhoMat, ciHalfMat, file, N);
     for (int t = 1; t < nt; t++) {
         cout << "Time step: " << t << "/" << nt << "\r" << std::flush;
         solution_step(rhoMat, ciHalfMat, lapMat, N);
-        if (t % 10 == 0)
-            write_data_step(rhoMat, ciHalfMat, file, N);
+        if (t % 50 == 0) write_data_step(rhoMat, ciHalfMat, file, N);
     }
     file.close();
+}
+
+void leapfrog_solver_2D()
+{
+    const int nt = gridParams.Nt, N = gridParams.N + 1, size = N * N;
+    vector<double> rhoMat(size, 0.0), ciHalfMat(size, 0.0), ci0Mat(size, 0.0), lapMat(size, 0.0);
+
+    set_gauss_conditions_2D(rhoMat, N);
+    init_ci_half(ciHalfMat, ci0Mat, rhoMat, lapMat, N);
+
+    solver(rhoMat, ciHalfMat, lapMat, N, nt);
 }

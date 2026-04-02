@@ -15,7 +15,6 @@ def check_proba(dat1: str, dat2: str) -> None:
     proba1 = np.sum(data1, axis=1)
     proba2 = np.sum(data2, axis=1)
 
-    # Normalize to the initial value so the reference is 1.0.
     proba1 = proba1/proba1[0]
     proba2 = proba2/proba2[0]
 

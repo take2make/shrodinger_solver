@@ -24,13 +24,15 @@ def plot_2_heatmaps(dat1: str, dat2: str, title1: str, title2: str) -> None:
     data2_resized = np.resize(data2, data1.shape)
 
     fig, axs = plt.subplots(1, 2, figsize=(10, 4))
-    im1 = axs[0].imshow(data1, aspect='auto',extent=[0, 10, 0, 10], cmap='viridis', origin='lower')
+    vmin = np.percentile(data1, 2); vmax = np.percentile(data1, 98)
+    im1 = axs[0].imshow(data1, aspect='auto',extent=[0, 10, 0, 10], cmap='inferno', origin='lower', vmin=vmin,vmax=vmax)
     axs[0].set_title(title1)
     axs[0].set_xlabel("$x$")
     axs[0].set_ylabel("$t$")
     fig.colorbar(im1, ax=axs[0], label="psi^2(x, t)")
 
-    im2 = axs[1].imshow(data2_resized, aspect='auto',extent=[0, 10, 0, 10], cmap='viridis', origin='lower')
+    vmin = np.percentile(data2_resized, 2); vmax = np.percentile(data2_resized, 98)
+    im2 = axs[1].imshow(data2_resized, aspect='auto',extent=[0, 10, 0, 10], cmap='inferno', origin='lower', vmin=vmin,vmax=vmax)
     axs[1].set_title(title2)
     axs[1].set_xlabel("$x$")
     axs[1].set_ylabel("$t$")
@@ -43,10 +45,8 @@ def compare_heatmaps(dat1: str, dat2: str) -> None:
     data1 = np.loadtxt(dat1)
     data2 = np.loadtxt(dat2)
 
-    # Приводим к одному размеру (например, к размеру первого массива)
     data2_resized = np.resize(data2, data1.shape)
 
-    # Визуализация
     fig, axs = plt.subplots(1, 3, figsize=(12, 4))
     axs[0].imshow(data1, aspect='auto', cmap='viridis', origin='lower')
     axs[0].set_title('Heatmap 1')
@@ -59,4 +59,3 @@ def compare_heatmaps(dat1: str, dat2: str) -> None:
 
 if __name__ == "__main__":
     plot_2_heatmaps(dat_cn, dat_lp, "Crank-Nicolson |psi|^2", "Leapfrog |psi|^2")
-    #compare_heatmaps(dat_cn, dat_lp)
