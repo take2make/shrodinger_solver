@@ -54,7 +54,16 @@ def main() -> None:
     data = load_data(DATA_PATH)
 
     fig, ax = plt.subplots(figsize=(6, 5))
-    im = ax.imshow(data[0], origin="lower", cmap="viridis", aspect="auto")
+    vmin = np.percentile(data, 2)
+    vmax = np.percentile(data, 98)
+    im = ax.imshow(
+        data[0],
+        origin="lower",
+        aspect="auto",
+        cmap="inferno",
+        vmin=vmin,
+        vmax=vmax,
+    )
     fig.colorbar(im, ax=ax, label="|psi|^2")
     ax.set_xlabel("x")
     ax.set_ylabel("y")

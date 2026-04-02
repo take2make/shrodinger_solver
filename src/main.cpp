@@ -21,7 +21,8 @@ int main_test()
 int main() {
     gridParams.m = 0.6;
     gridParams.dt = 0.4 * gridParams.m * gridParams.dx * gridParams.dx;
-    gridParams.N_steps = int(gridParams.T / gridParams.dt / 100);
+    //gridParams.dt = 0.001;
+    gridParams.N_steps = int(gridParams.T / gridParams.dt);
     leapfrog_solver2();
     return 0;
 }
