@@ -3,28 +3,31 @@
 using namespace Eigen;
 using namespace std;
 
-void time_step_solution(VectorXcd& u, const MatrixXcd& M, bool withWrite)
+void time_step_solution(VectorXcd& u, const MatrixXcd& M)
 {
     u = M * u;
-    if (withWrite) {
-        ecrit("dat/solution_temporelle_shrodinger.dat", u);
-    }
+    ecrit("dat/solution_temporelle_shrodinger.dat", u);
 }
 
 void solver(VectorXcd& u, const MatrixXcd& H_m, const MatrixXcd& H_p, int Nt)
 {
     ecrit_new("dat/solution_temporelle_shrodinger.dat", u);
     MatrixXcd M = H_p.inverse() * H_m;
-    for (int n = 0; n < Nt; n++) {
-        time_step_solution(u, M, true);
-    }
+    for (int n = 0; n < Nt; n++) time_step_solution(u, M);
 }
 
 void set_gauss_conditions(Eigen::VectorXcd& u0)
 {
     for (int k = 0; k <= gridParams.N; k++) {
-        if(k == 0 || k == gridParams.N) u0[k] = 0;
-        else u0[k] = gauss(k * gridParams.dx, gaussParams.x0, gaussParams.sigma);
+        bool is_boundary = (k == 0 || k == gridParams.N);
+        if (is_boundary) {
+            u0[k] = 0.0;
+        } else {
+            double x = k * gridParams.dx;
+            double re = gauss_with_velocity_real(x, gaussParams.x0, gaussParams.sigma, gaussParams.k);
+            double im = gauss_with_velocity_imag(x, gaussParams.x0, gaussParams.sigma, gaussParams.k);
+            u0[k] = std::complex<double>(re, im);
+        }
     }
 }
 
@@ -49,7 +52,7 @@ void cranck_nickolson_solver() {
     set_gauss_conditions(u0);
 
     MatrixXcd V = Eigen::MatrixXcd::Zero(N + 1, N + 1);
-    for(int j = 0; j <= N; j++) V(j,j) = barrier_potential(j * dx, 30.0, 4.5, 5.5);
+    for(int j = 0; j <= N; j++) V(j,j) = potential(j * dx);
     
     VectorXcd unew = u0;
     MatrixXcd I = MatrixXcd::Identity(N + 1, N + 1);
