@@ -56,6 +56,7 @@ def animate_heatmap(data, xs, ys):
     
     global anim
     anim = FuncAnimation(fig, update, frames=data.shape[0], interval=100, blit=False)
+    anim.save("heatmap_animation.gif", writer="pillow", fps=10)
     plt.show()
 
 def heatmap_for_step(data, xs, ys, step):
