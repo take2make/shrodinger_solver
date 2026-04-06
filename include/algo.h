@@ -74,5 +74,17 @@ double      potential_2D(double x, double y);
 void        cranck_nickolson_solver();
 void        leapfrog_solver();
 void        leapfrog_solver_2D();
+void        klein_gordon_1D();
+
+// Tests:
+void        test_gauss_without_potential_leapfrog();
+void        test_gauss_without_potential_cranck_nicholson();
+void        test_with_same_dt();
+void        test_gauss_with_velocity_with_barrier_step();
+void        test_leapfrog_2D();
+void        test_leapfrog_2D_with_velocity();
+void        test_leapfrog_2D_with_potential();
+void        test_leapfrog_double_slit_potential();
+void        test_klein_gordon_1D();
 
 #endif

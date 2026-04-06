@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int idx(int i, int n) { return n * (gridParams.N + 1) + i; }
+static int idx(int i, int n) { return n * (gridParams.N + 1) + i; }
 
 double laplace_1D(const vector<double>& vec, int i, int n) {
     if (i == 0 || i == gridParams.N) return 0.0;

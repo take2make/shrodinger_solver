@@ -5,15 +5,33 @@ using namespace std;
 
 int idx_2D(int i, int j, int N) { return i * N + j; }
 
-void set_gauss_conditions_2D(vector<double>& u0, int N)
+void set_gauss_conditions_2D(vector<double>& u0, vector<double>& ci0, int N, double k)
 {
-    vector<double> gx(N, 0.0);
-    for (int i = 0; i < N; i++) gx[i] = gauss(i * gridParams.dx, gaussParams.x0, gaussParams.sigma);
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             bool is_boundary = (i == 0 || j == 0 || i == N - 1 || j == N - 1);
-            if (is_boundary) u0[idx_2D(i, j, N)] = 0.0;
-            else u0[idx_2D(i, j, N)] = gx[i] * gx[j];
+            if (is_boundary) { u0[idx_2D(i, j, N)] = 0.0; ci0[idx_2D(i, j, N)] = 0.0; } 
+            else {
+                u0[idx_2D(i, j, N)] = gauss_2D_with_velocity_real(i * gridParams.dx, j * gridParams.dx, gaussParams.x0, gaussParams.y0, gaussParams.sigma, k);
+                ci0[idx_2D(i, j, N)] = gauss_2D_with_velocity_imag(i * gridParams.dx, j * gridParams.dx, gaussParams.x0, gaussParams.y0, gaussParams.sigma, k);
+            }
+        }
+    }
+    double norm = 0.0;
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            const double re = u0[idx_2D(i, j, N)];
+            const double im = ci0[idx_2D(i, j, N)];
+            norm += (re * re + im * im) * gridParams.dx * gridParams.dx;
+        }
+    }
+    if (norm > 0.0) {
+        const double scale = 1.0 / std::sqrt(norm);
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                u0[idx_2D(i, j, N)] *= scale;
+                ci0[idx_2D(i, j, N)] *= scale;
+            }
         }
     }
 }
@@ -41,13 +59,31 @@ void init_ci_half(vector<double>& ci_half, const vector<double>& ci0, const vect
     for (int k = 0; k < N * N; k++) ci_half[k] = ci0[k] + coeff * lap[k];
 }
 
+void half_potential_kick(vector<double>& rho, vector<double>& ci_half, int N)
+{
+    double x, y, v, angle, cosV, sinV, R, C;
+    const double half_dt = 0.5 * gridParams.dt;
+
+    for (int k = 0; k < N * N; k++) {
+        x = (k / N) * gridParams.dx; y = (k % N) * gridParams.dx;
+        v = potential_2D(x, y); angle = v * half_dt;
+        cosV = std::cos(angle); sinV = std::sin(angle);
+        R = rho[k]; C = ci_half[k];
+        rho[k] = R * cosV + C * sinV;
+        ci_half[k] = - R * sinV + C * cosV;
+    }
+}
+
 void solution_step(vector<double>& rho, vector<double>& ci_half, vector<double>& lap, int N)
 {
     const double coeff = gridParams.dt * 0.5 / gridParams.m;
+    
+    half_potential_kick(rho, ci_half, N);
     compute_laplace_2D(ci_half, lap, N);
     for (int k = 0; k < N * N; k++) rho[k] -= coeff * lap[k];
     compute_laplace_2D(rho, lap, N);
     for (int k = 0; k < N * N; k++) ci_half[k] += coeff * lap[k];
+    half_potential_kick(rho, ci_half, N);
 }
 
 void write_data_step(const vector<double>& rho, const vector<double>& ci_half, ofstream& file, int N)
@@ -70,7 +106,7 @@ void solver(vector<double>& rhoMat, vector<double>& ciHalfMat, vector<double>& l
     for (int t = 1; t < nt; t++) {
         cout << "Time step: " << t << "/" << nt << "\r" << std::flush;
         solution_step(rhoMat, ciHalfMat, lapMat, N);
-        if (t % 50 == 0) write_data_step(rhoMat, ciHalfMat, file, N);
+        if (t % gridParams.stride == 0) write_data_step(rhoMat, ciHalfMat, file, N);
     }
     file.close();
 }
@@ -78,9 +114,15 @@ void solver(vector<double>& rhoMat, vector<double>& ciHalfMat, vector<double>& l
 void leapfrog_solver_2D()
 {
     const int nt = gridParams.Nt, N = gridParams.N + 1, size = N * N;
+    double cfl = gridParams.dt / (gridParams.dx * gridParams.dx);
+    double k = gaussParams.k;
+    if (cfl > 0.5 / gridParams.m) {
+        std::cerr << "WARNING: CFL violated! cfl=" << cfl << " limit=" << 0.5 / gridParams.m  << " -> reduce dt or increase dx\n";
+        return;
+    }
     vector<double> rhoMat(size, 0.0), ciHalfMat(size, 0.0), ci0Mat(size, 0.0), lapMat(size, 0.0);
 
-    set_gauss_conditions_2D(rhoMat, N);
+    set_gauss_conditions_2D(rhoMat, ci0Mat, N, k);
     init_ci_half(ciHalfMat, ci0Mat, rhoMat, lapMat, N);
 
     solver(rhoMat, ciHalfMat, lapMat, N, nt);

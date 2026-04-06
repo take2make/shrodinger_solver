@@ -31,7 +31,7 @@ def load_data_2d(path):
     return np.stack(frames, axis=0)
 
 
-def check_proba(dat: str) -> None:
+def check_proba(dat):
 	data = load_data_2d(dat)
 
 	proba = np.sum(data, axis=(1, 2))

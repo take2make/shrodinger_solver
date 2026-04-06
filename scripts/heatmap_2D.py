@@ -84,4 +84,5 @@ def heatmap_for_step(data, xs, ys, step):
 
 if __name__ == "__main__":
     data, xs, ys = load_data_2d(dat)
+    animate_heatmap(data, xs, ys)
     heatmap_for_step(data, xs, ys, step=10)

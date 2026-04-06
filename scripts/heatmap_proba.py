@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 dat_cn = "dat/solution_temporelle_shrodinger.dat"
 dat_lp = "dat/solution_shrodinger_leapfrog.dat"
+dat_kg = "dat/klein_gordon_output.dat"
 
 def plot_2_heatmaps(dat1, dat2, title1, title2):
     data1 = np.loadtxt(dat1)
@@ -47,5 +48,16 @@ def compare_heatmaps(dat1, dat2):
     axs[2].set_title(f'Difference\nMSE={np.mean(diff**2):.4e}')
     plt.show()
 
+def plot_heatmap(dat):
+    data = np.loadtxt(dat)
+    plt.imshow(data, aspect='auto', cmap='viridis', origin='lower')
+    plt.colorbar(label='|psi|^2')
+    plt.title('Heatmap of |psi|^2')
+    plt.xlabel('Position (x)')
+    plt.ylabel('Time (t)')
+    plt.savefig("heatmap_kg.png", dpi=300)
+    plt.show()
+
 if __name__ == "__main__":
-    plot_2_heatmaps(dat_cn, dat_lp, "Crank-Nicolson |psi|^2", "Leapfrog |psi|^2")
+    #plot_2_heatmaps(dat_cn, dat_lp, "Crank-Nicolson |psi|^2", "Leapfrog |psi|^2")
+    plot_heatmap(dat_kg)
