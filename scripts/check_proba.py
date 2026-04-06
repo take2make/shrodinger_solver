@@ -1,9 +1,7 @@
-import argparse
-import glob
 import numpy as np
 import matplotlib.pyplot as plt
 
-DEFAULT_FILES = [
+files = [
     "dat/solution_temporelle_shrodinger.dat",
     "dat/solution_shrodinger_leapfrog.dat",
 ]
@@ -15,7 +13,6 @@ def check_proba(dat1: str, dat2: str) -> None:
     proba1 = np.sum(data1, axis=1)
     proba2 = np.sum(data2, axis=1)
 
-    # Normalize to the initial value so the reference is 1.0.
     proba1 = proba1/proba1[0]
     proba2 = proba2/proba2[0]
 
@@ -38,4 +35,4 @@ def check_proba(dat1: str, dat2: str) -> None:
     plt.show()
 
 if __name__ == "__main__":
-    check_proba(DEFAULT_FILES[0], DEFAULT_FILES[1])
+    check_proba(files[0], files[1])

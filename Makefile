@@ -33,11 +33,20 @@ plot:
 heatmap:
 	python3.11 scripts/heatmap_proba.py
 
-cn_2d:
-	python3.11 scripts/cranck_nickolson_plot_2d.py
+compare_1d:
+	python3.11 scripts/check_gauss_1d.py
+
+heatmap_2d:
+	python3.11 scripts/heatmap_2D.py
+
+compare_2d:
+	python3.11 scripts/check_gauss_2d.py
 
 proba:
 	python3.11 scripts/check_proba.py
+
+proba_2d:
+	python3.11 scripts/check_proba_2D.py
 
 test:
 	./shrodinger && make heatmap

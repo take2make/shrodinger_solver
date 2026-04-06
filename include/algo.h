@@ -12,32 +12,22 @@
 #include <math.h>
 
 struct GridParams {
-    int N_x = 200;
-    int N_steps = 800;
+    int N = 200;
+    int Nt = 800;
     double L = 10.0;
     double T = 10.0;
-    double dx = L / N_x;
+    double dx = L / N;
     double dt = 0.001;
+    int stride = 50;
     double m = 10.0;
 };
-
 inline GridParams gridParams;
-
-struct GridParams2d {
-    int N = 40; // nombre de divisions
-    double tf = 20; // duree de la simulation (s)
-    double L = 10; // taille de la boite
-    double dx = L/N; // separation entre les points du reseau
-    double dt = 0.05; // discretization du temps
-    double m = 1; // masse de la particule
-    double h_bar = 1; // constante de Planck reduite
-};
-inline GridParams2d gridParams2d;
 
 struct GaussParams {
     double A = 1.0;
     double x0 = 5.0;
-    double sigma = 0.5;
+    double y0 = 5.0;
+    double sigma = 1.0;
     double k = 0.5;
 };
 inline GaussParams gaussParams;
@@ -45,6 +35,9 @@ inline GaussParams gaussParams;
 enum class PotentialType {
     None,
     Barrier,
+    Barrier2D,
+    DoubleSlit2D,
+    BarrierStep,
     Harmonic,
 };
 
@@ -61,20 +54,37 @@ inline PotentialParams potentialParams;
 void        write_data_psi(const std::vector<double>& rho, const std::vector<double>& ci_half);
 void        ecrit_new(std::string filename, Eigen::VectorXcd u);
 void        ecrit(std::string filename, Eigen::VectorXcd u);
-void        ecrit_energy(std::string filename, std::complex<double> a, bool nouveau);
 
 // Initial conditions:
 double      gauss(double x, double m, double s);
+double      gauss_with_velocity_real(double x, double x0, double s, double k);
+double      gauss_with_velocity_imag(double x, double x0, double s, double k);
+double      gauss_2D(double x, double y, double x0, double y0, double s);
+double      gauss_2D_with_velocity_real(double x, double y, double x0, double y0, double s, double k);
+double      gauss_2D_with_velocity_imag(double x, double y, double x0, double y0, double s, double k);
 
 // Type of potentials:
 double      barrier_potential(double x, double V0, double a, double b);
 double      harmonic_oscillator(double x, double k);
+double      barrier_potential_2D(double x, double y, double V0, double a, double b);
 double      potential(double x);
+double      potential_2D(double x, double y);
 
 // Shrodinger solvers:
 void        cranck_nickolson_solver();
-void        cranck_nickolson_solver_2d();
 void        leapfrog_solver();
-void        leapfrog_solver2();
+void        leapfrog_solver_2D();
+void        klein_gordon_1D();
+
+// Tests:
+void        test_gauss_without_potential_leapfrog();
+void        test_gauss_without_potential_cranck_nicholson();
+void        test_with_same_dt();
+void        test_gauss_with_velocity_with_barrier_step();
+void        test_leapfrog_2D();
+void        test_leapfrog_2D_with_velocity();
+void        test_leapfrog_2D_with_potential();
+void        test_leapfrog_double_slit_potential();
+void        test_klein_gordon_1D();
 
 #endif

@@ -2,27 +2,16 @@
 
 int main()
 {
-    gridParams.m = 0.6;
-    gridParams.dt = 0.4 * gridParams.m * gridParams.dx * gridParams.dx;
-    gridParams.dt = 0.01; // doit etre assez petit pour leapfrog
-    gridParams.N_steps = int(gridParams.T / gridParams.dt);
-    potentialParams.type = PotentialType::Barrier;
-    potentialParams.barrier_V0 = 30.0;
-    potentialParams.barrier_a = 4.5;
-    potentialParams.barrier_b = 5.5;
-    
-    std::cout << "dt: " << gridParams.dt << ", N_steps: " << gridParams.N_steps << std::endl;
-    std::cout << "T real: " << gridParams.N_steps * gridParams.dt << std::endl;
-    //cranck_nickolson_solver();
-    cranck_nickolson_solver_2d();
-    //leapfrog_solver();
-    return 0;
-}
+    //test_gauss_without_potential_leapfrog();
+    //test_gauss_without_potential_cranck_nicholson();
+    //test_gauss_without_potential_cranck_nicholson();
+    //test_with_same_dt();
+    //test_gauss_with_velocity_with_barrier_step();
 
-int main2() {
-    gridParams.m = 0.6;
-    gridParams.dt = 0.4 * gridParams.m * gridParams.dx * gridParams.dx;
-    gridParams.N_steps = int(gridParams.T / gridParams.dt / 100);
-    leapfrog_solver2();
+    //test_leapfrog_2D();
+    test_leapfrog_2D_with_velocity();
+    //test_leapfrog_2D_with_potential();
+    //test_leapfrog_double_slit_potential();
+    //test_klein_gordon_1D();
     return 0;
 }
