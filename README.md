@@ -6,7 +6,6 @@ Leapfrog (Störmer–Verlet) (https://en.wikipedia.org/wiki/Leapfrog_integration
 
 make
 
-## Using python scripts
+## Using make to plot
 
-python3 scripts/heatmap_program.py
-python3 scripts/plotting_program.py
+make heatmap
