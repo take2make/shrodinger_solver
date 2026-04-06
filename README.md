@@ -1,8 +1,8 @@
-## Algoritm to solve klein_gordon equation
+## Algoritm to solve shrodinger and klein gordon equation
 
 Leapfrog (Störmer–Verlet) (https://en.wikipedia.org/wiki/Leapfrog_integration)
 
-## Generate klein_gordon program
+## Generate shrodinger program
 
 make
 
